@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: nginx:alpine
+    networks:
+      - frontend_network
+
+  backend:
+    image: node:14
+    working_dir: /app
+    command: sh -c "node server.js"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - database
+    networks:
+      - frontend_network
+      - backend_network
+
+  database:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend_network
+
+networks:
+  frontend_network:
+  backend_network:
+
+volumes:
+  pgdata:
